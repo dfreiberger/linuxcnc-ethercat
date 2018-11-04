@@ -19,7 +19,7 @@
 #include "hal.h"
 
 #include "lcec.h"
-#include "lcec_el7211.h"
+#include "lcec_el7201.h"
 
 #include "lcec_class_enc.h"
 
@@ -67,96 +67,96 @@ typedef struct {
 
   long fault_reset_timer;
 
-} lcec_el7211_data_t;
+} lcec_el7201_data_t;
 
 static const lcec_pindesc_t slave_pins[] = {
-  { HAL_BIT, HAL_IN, offsetof(lcec_el7211_data_t, enable), "%s.%s.%s.enable" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, enabled), "%s.%s.%s.enabled" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, fault), "%s.%s.%s.fault" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, status_ready), "%s.%s.%s.status-ready" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, status_switched_on), "%s.%s.%s.status-switched-on" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, status_operation), "%s.%s.%s.status-operation" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, status_fault), "%s.%s.%s.status-fault" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, status_disabled), "%s.%s.%s.status-disabled" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, status_warning), "%s.%s.%s.status-warning" },
-  { HAL_BIT, HAL_OUT, offsetof(lcec_el7211_data_t, status_limit_active), "%s.%s.%s.status-limit-active" },
-  { HAL_FLOAT, HAL_IN, offsetof(lcec_el7211_data_t, vel_cmd), "%s.%s.%s.velo-cmd" },
-  { HAL_FLOAT, HAL_OUT, offsetof(lcec_el7211_data_t, vel_fb), "%s.%s.%s.velo-fb" },
-  { HAL_FLOAT, HAL_OUT, offsetof(lcec_el7211_data_t, vel_fb_rpm), "%s.%s.%s.velo-fb-rpm" },
-  { HAL_FLOAT, HAL_OUT, offsetof(lcec_el7211_data_t, vel_fb_rpm_abs), "%s.%s.%s.velo-fb-rpm-abs" },
-  { HAL_S32, HAL_OUT, offsetof(lcec_el7211_data_t, vel_fb_raw), "%s.%s.%s.velo-fb-raw" },
+  { HAL_BIT, HAL_IN, offsetof(lcec_el7201_data_t, enable), "%s.%s.%s.enable" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, enabled), "%s.%s.%s.enabled" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, fault), "%s.%s.%s.fault" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, status_ready), "%s.%s.%s.status-ready" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, status_switched_on), "%s.%s.%s.status-switched-on" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, status_operation), "%s.%s.%s.status-operation" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, status_fault), "%s.%s.%s.status-fault" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, status_disabled), "%s.%s.%s.status-disabled" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, status_warning), "%s.%s.%s.status-warning" },
+  { HAL_BIT, HAL_OUT, offsetof(lcec_el7201_data_t, status_limit_active), "%s.%s.%s.status-limit-active" },
+  { HAL_FLOAT, HAL_IN, offsetof(lcec_el7201_data_t, vel_cmd), "%s.%s.%s.velo-cmd" },
+  { HAL_FLOAT, HAL_OUT, offsetof(lcec_el7201_data_t, vel_fb), "%s.%s.%s.velo-fb" },
+  { HAL_FLOAT, HAL_OUT, offsetof(lcec_el7201_data_t, vel_fb_rpm), "%s.%s.%s.velo-fb-rpm" },
+  { HAL_FLOAT, HAL_OUT, offsetof(lcec_el7201_data_t, vel_fb_rpm_abs), "%s.%s.%s.velo-fb-rpm-abs" },
+  { HAL_S32, HAL_OUT, offsetof(lcec_el7201_data_t, vel_fb_raw), "%s.%s.%s.velo-fb-raw" },
   { HAL_TYPE_UNSPECIFIED, HAL_DIR_UNSPECIFIED, -1, NULL }
 };
 
 static const lcec_pindesc_t slave_params[] = {
-  { HAL_FLOAT, HAL_RW, offsetof(lcec_el7211_data_t, scale), "%s.%s.%s.scale" },
-  { HAL_U32, HAL_RO, offsetof(lcec_el7211_data_t, vel_resolution), "%s.%s.%s.vel-resolution" },
-  { HAL_U32, HAL_RO, offsetof(lcec_el7211_data_t, pos_resolution), "%s.%s.%s.pos-resolution" },
+  { HAL_FLOAT, HAL_RW, offsetof(lcec_el7201_data_t, scale), "%s.%s.%s.scale" },
+  { HAL_U32, HAL_RO, offsetof(lcec_el7201_data_t, vel_resolution), "%s.%s.%s.vel-resolution" },
+  { HAL_U32, HAL_RO, offsetof(lcec_el7201_data_t, pos_resolution), "%s.%s.%s.pos-resolution" },
   { HAL_TYPE_UNSPECIFIED, HAL_DIR_UNSPECIFIED, -1, NULL }
 };
 
-static ec_pdo_entry_info_t lcec_el7211_in_pos[] = {
+static ec_pdo_entry_info_t lcec_el7201_in_pos[] = {
    {0x6000, 0x11, 32}  // actual position
 };
 
-static ec_pdo_entry_info_t lcec_el7211_in_status[] = {
+static ec_pdo_entry_info_t lcec_el7201_in_status[] = {
    {0x6010, 0x01, 16}  // status word
 };
 
-static ec_pdo_entry_info_t lcec_el7211_in_vel[] = {
+static ec_pdo_entry_info_t lcec_el7201_in_vel[] = {
    {0x6010, 0x07, 32}  // actual velocity
 };
 
-static ec_pdo_entry_info_t lcec_el7211_out_ctrl[] = {
+static ec_pdo_entry_info_t lcec_el7201_out_ctrl[] = {
    {0x7010, 0x01, 16}  // control word
 };
 
-static ec_pdo_entry_info_t lcec_el7211_out_cmd[] = {
+static ec_pdo_entry_info_t lcec_el7201_out_cmd[] = {
    {0x7010, 0x06, 32}  // velocity command
 };
 
-static ec_pdo_info_t lcec_el7211_pdos_in[] = {
-    {0x1A00, 1, lcec_el7211_in_pos},
-    {0x1A01, 1, lcec_el7211_in_status},
-    {0x1A02, 1, lcec_el7211_in_vel},
+static ec_pdo_info_t lcec_el7201_pdos_in[] = {
+    {0x1A00, 1, lcec_el7201_in_pos},
+    {0x1A01, 1, lcec_el7201_in_status},
+    {0x1A02, 1, lcec_el7201_in_vel},
 };
 
-static ec_pdo_info_t lcec_el7211_pdos_out[] = {
-    {0x1600, 1, lcec_el7211_out_ctrl},
-    {0x1601, 1, lcec_el7211_out_cmd},
+static ec_pdo_info_t lcec_el7201_pdos_out[] = {
+    {0x1600, 1, lcec_el7201_out_ctrl},
+    {0x1601, 1, lcec_el7201_out_cmd},
 };
 
-static ec_sync_info_t lcec_el7211_syncs[] = {
+static ec_sync_info_t lcec_el7201_syncs[] = {
     {0, EC_DIR_OUTPUT, 0, NULL},
     {1, EC_DIR_INPUT,  0, NULL},
-    {2, EC_DIR_OUTPUT, 2, lcec_el7211_pdos_out},
-    {3, EC_DIR_INPUT,  3, lcec_el7211_pdos_in},
+    {2, EC_DIR_OUTPUT, 2, lcec_el7201_pdos_out},
+    {3, EC_DIR_INPUT,  3, lcec_el7201_pdos_in},
     {0xff}
 };
 
 
-void lcec_el7211_check_scales(lcec_el7211_data_t *hal_data);
-void lcec_el7211_read(struct lcec_slave *slave, long period);
-void lcec_el7211_write(struct lcec_slave *slave, long period);
+void lcec_el7201_check_scales(lcec_el7201_data_t *hal_data);
+void lcec_el7201_read(struct lcec_slave *slave, long period);
+void lcec_el7201_write(struct lcec_slave *slave, long period);
 
-int lcec_el7211_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs) {
+int lcec_el7201_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *pdo_entry_regs) {
   lcec_master_t *master = slave->master;
-  lcec_el7211_data_t *hal_data;
+  lcec_el7201_data_t *hal_data;
   int err;
   uint8_t sdo_buf[4];
   uint32_t sdo_vel_resolution;
   uint32_t sdo_pos_resolution;
 
   // initialize callbacks
-  slave->proc_read = lcec_el7211_read;
-  slave->proc_write = lcec_el7211_write;
+  slave->proc_read = lcec_el7201_read;
+  slave->proc_write = lcec_el7201_write;
 
   // alloc hal memory
-  if ((hal_data = hal_malloc(sizeof(lcec_el7211_data_t))) == NULL) {
+  if ((hal_data = hal_malloc(sizeof(lcec_el7201_data_t))) == NULL) {
     rtapi_print_msg(RTAPI_MSG_ERR, LCEC_MSG_PFX "hal_malloc() for slave %s.%s failed\n", master->name, slave->name);
     return -EIO;
   }
-  memset(hal_data, 0, sizeof(lcec_el7211_data_t));
+  memset(hal_data, 0, sizeof(lcec_el7201_data_t));
   slave->hal_data = hal_data;
 
   // read sdos
@@ -170,7 +170,7 @@ int lcec_el7211_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *
   sdo_pos_resolution = EC_READ_U32(sdo_buf);
 
   // initialize sync info
-  slave->sync_info = lcec_el7211_syncs;
+  slave->sync_info = lcec_el7201_syncs;
 
   // initialize POD entries
   LCEC_PDO_INIT(pdo_entry_regs, slave->index, slave->vid, slave->pid, 0x6000, 0x11, &hal_data->pos_fb_pdo_os, NULL);
@@ -215,7 +215,7 @@ int lcec_el7211_init(int comp_id, struct lcec_slave *slave, ec_pdo_entry_reg_t *
   return 0;
 }
 
-void lcec_el7211_check_scales(lcec_el7211_data_t *hal_data) {
+void lcec_el7201_check_scales(lcec_el7201_data_t *hal_data) {
   // check for change in scale value
   if (hal_data->scale != hal_data->scale_old) {
     // scale value has changed, test and update it
@@ -232,9 +232,9 @@ void lcec_el7211_check_scales(lcec_el7211_data_t *hal_data) {
   }
 }
 
-void lcec_el7211_read(struct lcec_slave *slave, long period) {
+void lcec_el7201_read(struct lcec_slave *slave, long period) {
   lcec_master_t *master = slave->master;
-  lcec_el7211_data_t *hal_data = (lcec_el7211_data_t *) slave->hal_data;
+  lcec_el7201_data_t *hal_data = (lcec_el7201_data_t *) slave->hal_data;
   uint8_t *pd = master->process_data;
   uint16_t status;
   int32_t vel_raw;
@@ -255,7 +255,7 @@ void lcec_el7211_read(struct lcec_slave *slave, long period) {
   }
 
   // check for change in scale value
-  lcec_el7211_check_scales(hal_data);
+  lcec_el7201_check_scales(hal_data);
 
   // read status word
   status = EC_READ_U16(&pd[hal_data->status_pdo_os]);
@@ -293,15 +293,15 @@ void lcec_el7211_read(struct lcec_slave *slave, long period) {
   class_enc_update(&hal_data->enc, hal_data->pos_resolution, hal_data->scale_rcpt, pos_cnt, 0, false);
 }
 
-void lcec_el7211_write(struct lcec_slave *slave, long period) {
+void lcec_el7201_write(struct lcec_slave *slave, long period) {
   lcec_master_t *master = slave->master;
-  lcec_el7211_data_t *hal_data = (lcec_el7211_data_t *) slave->hal_data;
+  lcec_el7201_data_t *hal_data = (lcec_el7201_data_t *) slave->hal_data;
   uint8_t *pd = master->process_data;
   uint16_t control;
   double velo_raw;
 
   // check for change in scale value
-  lcec_el7211_check_scales(hal_data);
+  lcec_el7201_check_scales(hal_data);
 
   control = 0;
   if (*(hal_data->enable)) {
