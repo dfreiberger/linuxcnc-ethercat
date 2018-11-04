@@ -308,11 +308,11 @@ void lcec_el7201_write(struct lcec_slave *slave, long period) {
     if (*(hal_data->status_fault)) {
       control = 0x80;
     } else if (*(hal_data->status_disabled)) {
-      control = 0x06;
+      control = 0x02;
     } else if (*(hal_data->status_ready)) {
-      control = 0x07;
+      control = 0x03;
       if (*(hal_data->status_switched_on)) {
-        control = 0x0f;
+        control = 0x0b;
       }
     }
   }
