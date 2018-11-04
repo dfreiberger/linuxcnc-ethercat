@@ -303,16 +303,18 @@ void lcec_el7201_write(struct lcec_slave *slave, long period) {
   // check for change in scale value
   lcec_el7201_check_scales(hal_data);
 
+  // startup order defined in https://download.beckhoff.com/download/document/io/ethercat-terminals/el72x1en.pdf 
+  // section 6.2.5
   control = 0;
   if (*(hal_data->enable)) {
     if (*(hal_data->status_fault)) {
       control = 0x80;
     } else if (*(hal_data->status_disabled)) {
-      control = 0x02;
+      control = 0x06;
     } else if (*(hal_data->status_ready)) {
-      control = 0x03;
+      control = 0x07;
       if (*(hal_data->status_switched_on)) {
-        control = 0x0b;
+        control = 0x0f;
       }
     }
   }
